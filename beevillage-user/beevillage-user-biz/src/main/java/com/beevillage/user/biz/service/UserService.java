@@ -4,7 +4,9 @@ import com.beevillage.common.response.Result;
 import com.beevillage.user.api.dto.req.*;
 import com.beevillage.user.api.dto.resp.FindUserByIdRspDTO;
 import com.beevillage.user.api.dto.resp.FindUserByPhoneRspDTO;
-import com.beevillage.user.biz.model.UpdateUserInfoReqVO;
+import com.beevillage.user.biz.model.vo.FindUserProfileReqVO;
+import com.beevillage.user.biz.model.vo.FindUserProfileRspVO;
+import com.beevillage.user.biz.model.vo.UpdateUserInfoReqVO;
 
 import java.util.List;
 
@@ -62,4 +64,11 @@ public interface UserService {
      * @return
      */
     Result<List<FindUserByIdRspDTO>> findByIds(FindUsersByIdsReqDTO findUsersByIdsReqDTO);
+
+    /**
+     * 获取用户主页信息
+     *
+     * @return
+     */
+    Result<FindUserProfileRspVO> findUserProfile(FindUserProfileReqVO findUserProfileReqVO);
 }

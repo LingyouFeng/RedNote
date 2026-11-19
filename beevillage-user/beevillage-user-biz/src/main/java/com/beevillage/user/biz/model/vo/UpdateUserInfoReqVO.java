@@ -1,4 +1,4 @@
-package com.beevillage.user.biz.model;
+package com.beevillage.user.biz.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

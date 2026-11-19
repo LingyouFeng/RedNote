@@ -19,6 +19,11 @@
             <artifactId>beevillage-common</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.beevillage</groupId>
+            <artifactId>beevillage-count-api</artifactId>
+        </dependency>
+
         <!-- 上下文组件 -->
         <dependency>
             <groupId>com.beevillage</groupId>

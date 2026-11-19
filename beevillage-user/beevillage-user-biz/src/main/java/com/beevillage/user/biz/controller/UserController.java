@@ -4,11 +4,14 @@ import com.beevillage.common.response.Result;
 import com.beevillage.user.api.dto.req.*;
 import com.beevillage.user.api.dto.resp.FindUserByIdRspDTO;
 import com.beevillage.user.api.dto.resp.FindUserByPhoneRspDTO;
-import com.beevillage.user.biz.model.UpdateUserInfoReqVO;
+import com.beevillage.user.biz.model.vo.FindUserProfileReqVO;
+import com.beevillage.user.biz.model.vo.FindUserProfileRspVO;
+import com.beevillage.user.biz.model.vo.UpdateUserInfoReqVO;
 import com.beevillage.user.biz.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,16 @@ public class UserController {
     @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Result<?> updateUserInfo(@Valid UpdateUserInfoReqVO updateUserInfoReqVO) {
         return userService.updateUserInfo(updateUserInfoReqVO);
+    }
+
+    /**
+     * 获取用户主页信息
+     *
+     * @return
+     */
+    @PostMapping(value = "/profile")
+    public Result<FindUserProfileRspVO> findUserProfile(@Validated @RequestBody FindUserProfileReqVO findUserProfileReqVO) {
+        return userService.findUserProfile(findUserProfileReqVO);
     }
 
     // ===================================== 对其他服务提供的接口 =====================================

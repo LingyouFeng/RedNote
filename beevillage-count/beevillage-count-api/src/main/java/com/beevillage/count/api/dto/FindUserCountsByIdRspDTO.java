@@ -1,0 +1,49 @@
+package com.beevillage.count.api.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 查询用户维度相关计数
+ *
+ * @author Jason Feng
+ * @since 2026-04-19 17:04
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class FindUserCountsByIdRspDTO {
+
+    /**
+     * 用户 ID
+     */
+    private Long userId;
+
+    /**
+     * 粉丝数
+     */
+    private Long fansTotal;
+
+    /**
+     * 关注数
+     */
+    private Long followingTotal;
+
+    /**
+     * 当前发布笔记数
+     */
+    private Long noteTotal;
+
+    /**
+     * 当前获得点赞数
+     */
+    private Long likeTotal;
+
+    /**
+     * 当前获得收藏数
+     */
+    private Long collectTotal;
+}

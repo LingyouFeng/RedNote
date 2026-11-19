@@ -149,4 +149,8 @@
         insert into t_user_count (user_id, note_total)
         values (#{userId}, #{count}) on duplicate key update note_total = note_total + (#{count});
     </insert>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from t_user_count where user_id = #{userId}
+    </select>
 </mapper>

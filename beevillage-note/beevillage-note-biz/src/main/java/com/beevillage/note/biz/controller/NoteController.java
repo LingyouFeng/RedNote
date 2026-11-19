@@ -6,7 +6,6 @@ import com.beevillage.note.biz.service.NoteService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,22 +56,27 @@ public class NoteController {
     }
 
     @PostMapping(value = "/like")
-    public Result<?> likeNote(@Validated @RequestBody LikeNoteReqVO likeNoteReqVO) {
+    public Result<?> likeNote(@Valid @RequestBody LikeNoteReqVO likeNoteReqVO) {
         return noteService.likeNote(likeNoteReqVO);
     }
 
     @PostMapping(value = "/unlike")
-    public Result<?> unlikeNote(@Validated @RequestBody UnlikeNoteReqVO unlikeNoteReqVO) {
+    public Result<?> unlikeNote(@Valid @RequestBody UnlikeNoteReqVO unlikeNoteReqVO) {
         return noteService.unlikeNote(unlikeNoteReqVO);
     }
 
     @PostMapping(value = "/collect")
-    public Result<?> collectNote(@Validated @RequestBody CollectNoteReqVO collectNoteReqVO) {
+    public Result<?> collectNote(@Valid @RequestBody CollectNoteReqVO collectNoteReqVO) {
         return noteService.collectNote(collectNoteReqVO);
     }
 
     @PostMapping(value = "/uncollect")
-    public Result<?> unCollectNote(@Validated @RequestBody UnCollectNoteReqVO unCollectNoteReqVO) {
+    public Result<?> unCollectNote(@Valid @RequestBody UnCollectNoteReqVO unCollectNoteReqVO) {
         return noteService.unCollectNote(unCollectNoteReqVO);
+    }
+
+    @PostMapping(value = "/isLikedAndCollectedData")
+    public Result<FindNoteIsLikedAndCollectedRspVO> isLikedAndCollectedData(@Valid @RequestBody FindNoteIsLikedAndCollectedReqVO findNoteIsLikedAndCollectedReqVO) {
+        return noteService.isLikedAndCollectedData(findNoteIsLikedAndCollectedReqVO);
     }
 }
