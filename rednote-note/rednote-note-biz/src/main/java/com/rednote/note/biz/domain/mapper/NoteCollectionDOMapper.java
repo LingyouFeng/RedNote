@@ -23,6 +23,7 @@ public interface NoteCollectionDOMapper {
 
     /**
      * 查询笔记是否被收藏
+     *
      * @param userId
      * @param noteId
      * @return
@@ -31,6 +32,7 @@ public interface NoteCollectionDOMapper {
 
     /**
      * 查询用户已收藏的笔记
+     *
      * @param userId
      * @return
      */
@@ -38,6 +40,7 @@ public interface NoteCollectionDOMapper {
 
     /**
      * 查询笔记是否已经被收藏
+     *
      * @param userId
      * @param noteId
      * @return
@@ -46,14 +49,22 @@ public interface NoteCollectionDOMapper {
 
     /**
      * 查询用户最近收藏的笔记
+     *
      * @param userId
      * @param limit
      * @return
      */
-    List<NoteCollectionDO> selectCollectedByUserIdAndLimit(@Param("userId") Long userId, @Param("limit")  int limit);
+    List<NoteCollectionDO> selectCollectedByUserIdAndLimit(@Param("userId") Long userId, @Param("limit") int limit);
+
+    int selectTotalCountByUserId(@Param("userId") Long userId);
+
+    List<Long> selectPageListByUserId(@Param("userId") Long userId,
+                                      @Param("offset") long offset,
+                                      @Param("pageSize") long pageSize);
 
     /**
      * 新增笔记收藏记录，若已存在，则更新笔记收藏记录
+     *
      * @param noteCollectionDO
      * @return
      */
@@ -61,6 +72,7 @@ public interface NoteCollectionDOMapper {
 
     /**
      * 取消收藏
+     *
      * @param noteCollectionDO
      * @return
      */
@@ -68,6 +80,7 @@ public interface NoteCollectionDOMapper {
 
     /**
      * 批量插入或更新
+     *
      * @param noteCollectionDOS
      * @return
      */

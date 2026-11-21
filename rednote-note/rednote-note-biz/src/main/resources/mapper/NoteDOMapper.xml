@@ -21,7 +21,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, title, is_content_empty, content_uuid, creator_id, topic_id, topic_name, is_top,
+        id
+        , title, is_content_empty, content_uuid, creator_id, topic_id, topic_name, is_top,
           `type`, img_uris, video_uri, visible, create_time, update_time, `status`
     </sql>
 
@@ -149,6 +150,67 @@
         </trim>
     </insert>
 
+    <select id="selectCountByNoteId" resultType="int">
+        select count(1)
+        from t_note
+        where id = #{noteId}
+          and status = 1
+    </select>
+
+    <select id="selectCreatorIdByNoteId" resultType="long">
+        select creator_id
+        from t_note
+        where id = #{noteId}
+          and status = 1
+    </select>
+
+    <select id="selectTotalCount" resultType="int">
+        select count(*) from t_note where visible = 0 and status = 1
+        <if test="channelId != null and channelId != 0">
+            and channel_id = #{channelId}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="selectTotalCountByCreatorId" resultType="int">
+        select count(*)
+        from t_note
+        where visible = 0
+          and status = 1
+          and creator_id = #{creatorId}
+        order by create_time desc
+    </select>
+
+    <select id="selectPageList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_note where visible = 0 and status = 1
+        <if test="channelId != null and channelId != 0">
+            and channel_id = #{channelId}
+        </if>
+        order by create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectPageListByCreatorId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_note where visible = 0 and status = 1
+        and creator_id = #{creatorId}
+        order by create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectByNoteIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_note
+        where id in
+        <foreach collection="noteIds" item="noteId" open="(" separator="," close=")">
+            #{noteId}
+        </foreach>
+    </select>
+
     <update id="updateByPrimaryKeySelective" parameterType="com.rednote.note.biz.domain.dataobject.NoteDO">
         update t_note
         <set>
@@ -213,23 +275,17 @@
 
     <update id="updateVisibleOnlyMe" parameterType="com.rednote.note.biz.domain.dataobject.NoteDO">
         update t_note
-        set visible = #{visible,jdbcType=TINYINT},
+        set visible     = #{visible,jdbcType=TINYINT},
             update_time = #{updateTime,jdbcType=TIMESTAMP}
-        where id = #{id,jdbcType=BIGINT} and `status` = 1
+        where id = #{id,jdbcType=BIGINT}
+          and `status` = 1
     </update>
 
     <update id="updateIsTop" parameterType="com.rednote.note.biz.domain.dataobject.NoteDO">
         update t_note
-        set is_top = #{isTop,jdbcType=BIT},
+        set is_top      = #{isTop,jdbcType=BIT},
             update_time = #{updateTime,jdbcType=TIMESTAMP}
-        where id = #{id,jdbcType=BIGINT} and creator_id = #{creatorId,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+          and creator_id = #{creatorId,jdbcType=BIGINT}
     </update>
-
-    <select id="selectCountByNoteId" resultType="int">
-        select count(1) from t_note where id = #{noteId} and status = 1
-    </select>
-
-    <select id="selectCreatorIdByNoteId" resultType="long">
-        select creator_id from t_note where id = #{noteId} and status = 1
-    </select>
 </mapper>

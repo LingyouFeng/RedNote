@@ -21,6 +21,11 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
 
+    <select id="selectByLikeName" resultMap="BaseResultMap">
+        select id, name from t_topic
+        WHERE name LIKE CONCAT(#{keyword}, '%') and is_deleted = 0 limit 50
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete
         from t_topic
@@ -49,7 +54,7 @@
             <if test="updateTime != null">
                 update_time,
             </if>
-            <if test="isDeleted != null">
+            <if test="deleted != null">
                 is_deleted,
             </if>
         </trim>
@@ -66,7 +71,7 @@
             <if test="updateTime != null">
                 #{updateTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="isDeleted != null">
+            <if test="deleted != null">
                 #{isDeleted,jdbcType=BIT},
             </if>
         </trim>
@@ -84,7 +89,7 @@
             <if test="updateTime != null">
                 update_time = #{updateTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="isDeleted != null">
+            <if test="deleted != null">
                 is_deleted = #{isDeleted,jdbcType=BIT},
             </if>
         </set>

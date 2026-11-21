@@ -3,6 +3,8 @@ package com.rednote.note.biz.domain.mapper;
 import com.rednote.note.biz.domain.dataobject.ChannelDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 频道 Mapper 类
  *
@@ -19,6 +21,8 @@ public interface ChannelDOMapper {
     int insertSelective(ChannelDO record);
 
     ChannelDO selectByPrimaryKey(Long id);
+
+    List<ChannelDO> selectAll();
 
     int updateByPrimaryKeySelective(ChannelDO record);
 

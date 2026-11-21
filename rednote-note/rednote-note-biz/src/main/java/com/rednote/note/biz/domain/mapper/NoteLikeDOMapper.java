@@ -29,6 +29,12 @@ public interface NoteLikeDOMapper {
 
     List<NoteLikeDO> selectLikedByUserIdAndLimit(@Param("userId") Long userId, @Param("limit")  int limit);
 
+    int selectTotalCountByUserId(@Param("userId") Long userId);
+
+    List<Long> selectPageListByUserId(@Param("userId") Long userId,
+                                      @Param("offset") long offset,
+                                      @Param("pageSize") long pageSize);
+
     /**
      * 新增笔记点赞记录，若已存在，则更新笔记点赞记录
      * @param noteLikeDO

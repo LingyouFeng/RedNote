@@ -91,7 +91,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-  
+
     <update id="updateByPrimaryKey" parameterType="com.rednote.note.biz.domain.dataobject.NoteLikeDO">
         update t_note_like
         set user_id     = #{userId,jdbcType=BIGINT},
@@ -102,31 +102,65 @@
     </update>
 
     <select id="selectCountByUserIdAndNoteId" resultType="int" parameterType="map">
-        select count(1) from t_note_like where user_id = #{userId} and note_id = #{noteId} and status = 1 limit 1
+        select count(1)
+        from t_note_like
+        where user_id = #{userId}
+          and note_id = #{noteId}
+          and status = 1 limit 1
     </select>
 
     <select id="selectByUserId" resultMap="BaseResultMap" parameterType="map">
-        select note_id from t_note_like where user_id = #{userId} and status = 1
+        select note_id
+        from t_note_like
+        where user_id = #{userId}
+          and status = 1
     </select>
 
     <select id="selectNoteIsLiked" parameterType="map" resultType="int">
-        select count(1) from t_note_like where user_id = #{userId} and note_id = #{noteId} and status = 1 limit 1
+        select count(1)
+        from t_note_like
+        where user_id = #{userId}
+          and note_id = #{noteId}
+          and status = 1 limit 1
     </select>
 
     <select id="selectLikedByUserIdAndLimit" resultMap="BaseResultMap" parameterType="map">
-        select note_id, create_time from t_note_like
-        where user_id = #{userId} and status = 1 order by create_time desc limit #{limit}
+        select note_id, create_time
+        from t_note_like
+        where user_id = #{userId}
+          and status = 1
+        order by create_time desc limit #{limit}
+    </select>
+
+    <select id="selectTotalCountByUserId" resultType="int">
+        select count(*)
+        from t_note_like
+        where user_id = #{userId}
+          and status = 1
+    </select>
+
+    <select id="selectPageListByUserId" resultType="long">
+        select note_id
+        from t_note_like
+        where user_id = #{userId}
+          and status = 1
+        order by create_time desc
+            limit #{offset}, #{pageSize}
     </select>
 
     <insert id="insertOrUpdate" parameterType="com.rednote.note.biz.domain.dataobject.NoteLikeDO">
         insert into t_note_like (user_id, note_id, create_time, status)
-        values (#{userId}, #{noteId}, #{createTime}, #{status})
-        on duplicate key update create_time = #{createTime}, status = #{status};
+        values (#{userId}, #{noteId}, #{createTime}, #{status}) on duplicate key
+        update create_time = #{createTime}, status = #{status};
     </insert>
 
     <update id="update2UnlikeByUserIdAndNoteId" parameterType="com.rednote.note.biz.domain.dataobject.NoteLikeDO">
-        update t_note_like set status = #{status}, create_time = #{createTime}
-        where user_id = #{userId} and note_id = #{noteId} and status = 1
+        update t_note_like
+        set status      = #{status},
+            create_time = #{createTime}
+        where user_id = #{userId}
+          and note_id = #{noteId}
+          and status = 1
     </update>
 
     <insert id="batchInsertOrUpdate" parameterType="list">

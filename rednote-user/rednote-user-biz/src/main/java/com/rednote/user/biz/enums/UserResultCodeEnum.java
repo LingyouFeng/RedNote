@@ -21,6 +21,7 @@ public enum UserResultCodeEnum implements BaseExceptionInterface {
     UPLOAD_AVATAR_FAIL(20005, "头像上传失败"),
     UPLOAD_BACKGROUND_IMG_FAIL(20006, "背景图上传失败"),
     USER_NOT_FOUND(20007, "该用户不存在"),
+    CANT_UPDATE_OTHER_USER_PROFILE(20008, "无权限修改他人用户信息"),
     ;
 
     private final Integer code;
