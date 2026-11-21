@@ -3,28 +3,28 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.beevillage</groupId>
-    <artifactId>beevillage</artifactId>
+    <groupId>com.rednote</groupId>
+    <artifactId>rednote</artifactId>
     <version>${revision}</version>
 
     <name>${project.artifactId}</name>
-    <description>蜜蜂村</description>
+    <description>小红书</description>
     <packaging>pom</packaging>
 
     <modules>
-        <module>beevillage-framework</module>
-        <module>beevillage-auth</module>
-        <module>beevillage-gateway</module>
-        <module>beevillage-oss</module>
-        <module>beevillage-user</module>
-        <module>beevillage-kv</module>
-        <module>beevillage-leaf</module>
-        <module>beevillage-note</module>
-        <module>beevillage-user-relation</module>
-        <module>beevillage-count</module>
-        <module>beevillage-data-align</module>
-        <module>beevillage-search</module>
-        <module>beevillage-comment</module>
+        <module>rednote-framework</module>
+        <module>rednote-auth</module>
+        <module>rednote-gateway</module>
+        <module>rednote-oss</module>
+        <module>rednote-user</module>
+        <module>rednote-kv</module>
+        <module>rednote-leaf</module>
+        <module>rednote-note</module>
+        <module>rednote-user-relation</module>
+        <module>rednote-count</module>
+        <module>rednote-data-align</module>
+        <module>rednote-search</module>
+        <module>rednote-comment</module>
     </modules>
 
     <properties>
@@ -86,50 +86,50 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-common</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-common</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-context</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-context</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-oss-api</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-oss-api</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-user-api</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-user-api</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-count-api</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-count-api</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-kv-api</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-kv-api</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-leaf-api</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-leaf-api</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.beevillage</groupId>
-                <artifactId>beevillage-search-api</artifactId>
+                <groupId>com.rednote</groupId>
+                <artifactId>rednote-search-api</artifactId>
                 <version>${revision}</version>
             </dependency>
 

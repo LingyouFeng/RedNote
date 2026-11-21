@@ -1,0 +1,2 @@
+com.rednote.context.config.ContextAutoConfiguration
+com.rednote.context.config.FeignContextAutoConfiguration
