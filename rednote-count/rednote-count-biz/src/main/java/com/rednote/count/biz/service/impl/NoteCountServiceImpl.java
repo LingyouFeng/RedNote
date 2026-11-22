@@ -127,9 +127,7 @@ public class NoteCountServiceImpl implements NoteCountService {
                     findNoteCountsByIdRspDTO.setCommentTotal(Objects.nonNull(noteCountDO) ? noteCountDO.getCommentTotal() : 0);
             }
         }
-
-
-        return Result.success();
+        return Result.success(findNoteCountsByIdRspDTOS);
     }
 
     /**

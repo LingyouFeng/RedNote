@@ -1,5 +1,6 @@
 package com.rednote.note.biz.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,6 +46,7 @@ public class FindNoteDetailRspVO {
     /**
      * 编辑时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
     /**
@@ -52,4 +54,18 @@ public class FindNoteDetailRspVO {
      */
     private Integer visible;
 
+    /**
+     * 被点赞数
+     */
+    private String likeTotal;
+
+    /**
+     * 被收藏数
+     */
+    private String collectTotal;
+
+    /**
+     * 被评论数
+     */
+    private String commentTotal;
 }

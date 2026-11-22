@@ -43,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
@@ -67,6 +68,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
+
+    @Value("${rednote-user.default.avatar:#{null}}")
+    private String defaultAvatar;
 
     @Resource
     private UserDOMapper userDOMapper;
@@ -248,6 +252,7 @@ public class UserServiceImpl implements UserService {
                 .phone(phone)
                 .rednoteId(String.valueOf(rednoteId))
                 .nickname("小红书" + rednoteId)
+                .avatar(defaultAvatar)
                 .status(StatusEnum.ENABLE.getValue())
                 .createTime(LocalDateTime.now())
                 .updateTime(LocalDateTime.now())

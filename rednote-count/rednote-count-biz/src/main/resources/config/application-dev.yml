@@ -52,7 +52,7 @@ spring:
 
 logging:
   level:
-    com.quanxiaoha.xiaohashu.user.relation.biz.domain.mapper: debug
+    com.rednote.count.biz.domain.mapper: debug
 
 # jasypt 配置加密
 jasypt:

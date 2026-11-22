@@ -286,8 +286,14 @@ public class NoteServiceImpl implements NoteService {
         if (StringUtils.isNotBlank(findNoteDetailRspVOStrLocalCache)) {
             FindNoteDetailRspVO findNoteDetailRspVO = JSON.parseObject(findNoteDetailRspVOStrLocalCache, FindNoteDetailRspVO.class);
             log.info("==> 命中了本地缓存；{}", findNoteDetailRspVOStrLocalCache);
+            if (Objects.isNull(findNoteDetailRspVO)) {
+                return Result.success();
+            }
             // 可见性校验
             checkNoteVisibleFromVO(userId, findNoteDetailRspVO);
+            // 设置笔记计数
+            getAndSetCount(noteId, findNoteDetailRspVO);
+
             return Result.success(findNoteDetailRspVO);
         }
 
@@ -307,6 +313,8 @@ public class NoteServiceImpl implements NoteService {
             });
             // 可见性校验
             checkNoteVisibleFromVO(userId, findNoteDetailRspVO);
+            // 设置笔记计数
+            getAndSetCount(noteId, findNoteDetailRspVO);
 
             return Result.success(findNoteDetailRspVO);
         }
@@ -344,13 +352,19 @@ public class NoteServiceImpl implements NoteService {
                     .supplyAsync(() -> keyValueRpcService.findNoteContent(noteDO.getContentUuid()), threadPoolTaskExecutor);
         }
 
+        // RPC: 调用计数服务，获取笔记计数数据
+        CompletableFuture<List<FindNoteCountsByIdRspDTO>> countResultFuture = CompletableFuture.supplyAsync(() ->
+                countRpcService.findByNoteIds(Collections.singletonList(noteId)), threadPoolTaskExecutor);
+
         CompletableFuture<String> finalContentResultFuture = contentResultFuture;
         CompletableFuture<FindNoteDetailRspVO> resultFuture = CompletableFuture
-                .allOf(userResultFuture, contentResultFuture)
+                .allOf(userResultFuture, contentResultFuture, countResultFuture)
                 .thenApply(s -> {
                     // 获取 Future 返回的结果
                     FindUserByIdRspDTO findUserByIdRspDTO = userResultFuture.join();
                     String content = finalContentResultFuture.join();
+                    List<FindNoteCountsByIdRspDTO> findNoteCountByIdRspDTOS = countResultFuture.join();
+                    FindNoteCountsByIdRspDTO findNoteCountByIdRspDTO = findNoteCountByIdRspDTOS.get(0);
 
                     // 笔记类型
                     Integer noteType = noteDO.getType();
@@ -379,8 +393,10 @@ public class NoteServiceImpl implements NoteService {
                             .videoUri(noteDO.getVideoUri())
                             .updateTime(noteDO.getUpdateTime())
                             .visible(noteDO.getVisible())
+                            .likeTotal(Objects.isNull(findNoteCountByIdRspDTO) ? "0" : NumberUtils.formatNumberString(findNoteCountByIdRspDTO.getLikeTotal()))
+                            .collectTotal(Objects.isNull(findNoteCountByIdRspDTO) ? "0" : NumberUtils.formatNumberString(findNoteCountByIdRspDTO.getCollectTotal()))
+                            .commentTotal(Objects.isNull(findNoteCountByIdRspDTO) ? "0" : NumberUtils.formatNumberString(findNoteCountByIdRspDTO.getCommentTotal()))
                             .build();
-
                 });
 
         // 获取拼装后的 FindNoteDetailRspVO
@@ -421,6 +437,29 @@ public class NoteServiceImpl implements NoteService {
         if (Objects.nonNull(findNoteDetailRspVO)) {
             Integer visible = findNoteDetailRspVO.getVisible();
             checkNoteVisible(visible, userId, findNoteDetailRspVO.getCreatorId());
+        }
+    }
+
+    private void getAndSetCount(Long noteId, FindNoteDetailRspVO findNoteDetailRspVO) {
+        String noteCountKey = RedisKeyConstants.buildNoteCountKey(noteId);
+        List<Object> counts = redisTemplate.opsForHash()
+                .multiGet(noteCountKey, Arrays.asList(RedisKeyConstants.FIELD_LIKE_TOTAL,
+                        RedisKeyConstants.FIELD_COLLECT_TOTAL,
+                        RedisKeyConstants.FIELD_COMMENT_TOTAL));
+
+        boolean hasNull = counts.stream().anyMatch(Objects::isNull);
+
+        // 调用计数服务获取
+        if (hasNull) {
+            List<FindNoteCountsByIdRspDTO> findNoteCountsByIdRspDTOS = countRpcService.findByNoteIds(Collections.singletonList(noteId));
+            FindNoteCountsByIdRspDTO findNoteCountByIdRspDTO = findNoteCountsByIdRspDTOS.get(0);
+            findNoteDetailRspVO.setLikeTotal(Objects.isNull(findNoteCountByIdRspDTO) ? "0" : NumberUtils.formatNumberString(findNoteCountByIdRspDTO.getLikeTotal()));
+            findNoteDetailRspVO.setCollectTotal(Objects.isNull(findNoteCountByIdRspDTO) ? "0" : NumberUtils.formatNumberString(findNoteCountByIdRspDTO.getCollectTotal()));
+            findNoteDetailRspVO.setCommentTotal(Objects.isNull(findNoteCountByIdRspDTO) ? "0" : NumberUtils.formatNumberString(findNoteCountByIdRspDTO.getCommentTotal()));
+        } else {
+            findNoteDetailRspVO.setLikeTotal(NumberUtils.formatNumberString(Long.parseLong(counts.get(0).toString())));
+            findNoteDetailRspVO.setCollectTotal(NumberUtils.formatNumberString(Long.parseLong(counts.get(1).toString())));
+            findNoteDetailRspVO.setCommentTotal(NumberUtils.formatNumberString(Long.parseLong(counts.get(2).toString())));
         }
     }
 

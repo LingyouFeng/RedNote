@@ -1,5 +1,6 @@
 package com.rednote.gateway.filter;
 
+import cn.dev33.satoken.reactor.context.SaReactorSyncHolder;
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -29,10 +30,13 @@ public class AddUserId2HeaderFilter implements GlobalFilter {
         // 用户 ID
         Long userId = null;
         try {
+            // 修复 SaToken 上下文丢失的问题
+            SaReactorSyncHolder.setContext(exchange);
             // 获取当前登录用户的 ID
             userId = StpUtil.getLoginIdAsLong();
         } catch (Exception e) {
             // 若没有登录，则直接放行
+            log.error("获取当前登录用户ID失败！", e);
             return chain.filter(exchange);
         }
 
