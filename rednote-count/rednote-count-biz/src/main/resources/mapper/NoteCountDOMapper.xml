@@ -115,4 +115,13 @@
         insert into t_note_count (note_id, comment_total)
         values (#{noteId}, #{count}) on duplicate key update comment_total = comment_total + (#{count});
     </insert>
+
+    <select id="selectByNoteIds" resultMap="BaseResultMap">
+        select note_id, like_total, collect_total, comment_total
+        from t_note_count
+        where note_id in
+        <foreach collection="noteIds" item="noteId" open="(" separator="," close=")">
+            #{noteId}
+        </foreach>
+    </select>
 </mapper>

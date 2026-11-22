@@ -40,6 +40,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.rednote</groupId>
+            <artifactId>rednote-count-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>

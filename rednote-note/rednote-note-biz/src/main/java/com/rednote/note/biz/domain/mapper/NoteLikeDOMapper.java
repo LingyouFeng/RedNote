@@ -36,6 +36,15 @@ public interface NoteLikeDOMapper {
                                       @Param("pageSize") long pageSize);
 
     /**
+     * 查询某用户，对于一批量笔记的已点赞记录
+     * @param userId
+     * @param noteIds
+     * @return
+     */
+    List<NoteLikeDO> selectByUserIdAndNoteIds(@Param("userId") Long userId,
+                                              @Param("noteIds") List<Long> noteIds);
+
+    /**
      * 新增笔记点赞记录，若已存在，则更新笔记点赞记录
      * @param noteLikeDO
      * @return

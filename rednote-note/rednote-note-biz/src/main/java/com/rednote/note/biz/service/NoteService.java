@@ -13,6 +13,7 @@ public interface NoteService {
 
     /**
      * 笔记发布
+     *
      * @param publishNoteReqVO
      * @return
      */
@@ -20,6 +21,7 @@ public interface NoteService {
 
     /**
      * 笔记详情
+     *
      * @param findNoteDetailReqVO
      * @return
      */
@@ -28,6 +30,7 @@ public interface NoteService {
 
     /**
      * 笔记更新
+     *
      * @param updateNoteReqVO
      * @return
      */
@@ -35,12 +38,14 @@ public interface NoteService {
 
     /**
      * 删除本地笔记缓存
+     *
      * @param noteId
      */
     void deleteNoteLocalCache(Long noteId);
 
     /**
      * 删除笔记
+     *
      * @param deleteNoteReqVO
      * @return
      */
@@ -48,6 +53,7 @@ public interface NoteService {
 
     /**
      * 笔记仅对自己可见
+     *
      * @param updateNoteVisibleOnlyMeReqVO
      * @return
      */
@@ -55,6 +61,7 @@ public interface NoteService {
 
     /**
      * 笔记置顶 / 取消置顶
+     *
      * @param topNoteReqVO
      * @return
      */
@@ -62,6 +69,7 @@ public interface NoteService {
 
     /**
      * 点赞笔记
+     *
      * @param likeNoteReqVO
      * @return
      */
@@ -69,6 +77,7 @@ public interface NoteService {
 
     /**
      * 取消点赞笔记
+     *
      * @param unlikeNoteReqVO
      * @return
      */
@@ -76,6 +85,7 @@ public interface NoteService {
 
     /**
      * 收藏笔记
+     *
      * @param collectNoteReqVO
      * @return
      */
@@ -83,6 +93,7 @@ public interface NoteService {
 
     /**
      * 取消收藏笔记
+     *
      * @param unCollectNoteReqVO
      * @return
      */
@@ -90,8 +101,17 @@ public interface NoteService {
 
     /**
      * 获取是否点赞、收藏数据
+     *
      * @param findNoteIsLikedAndCollectedReqVO
      * @return
      */
     Result<FindNoteIsLikedAndCollectedRspVO> isLikedAndCollectedData(FindNoteIsLikedAndCollectedReqVO findNoteIsLikedAndCollectedReqVO);
+
+    /**
+     * 用户主页 - 查询已发布的笔记列表
+     *
+     * @param findPublishedNoteListReqVO
+     * @return
+     */
+    Result<FindPublishedNoteListRspVO> findPublishedNoteList(FindPublishedNoteListReqVO findPublishedNoteListReqVO);
 }

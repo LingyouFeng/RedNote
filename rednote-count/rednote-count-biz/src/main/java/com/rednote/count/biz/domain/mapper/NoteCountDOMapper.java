@@ -4,6 +4,8 @@ import com.rednote.count.biz.domain.dataobject.NoteCountDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface NoteCountDOMapper {
 
@@ -21,6 +23,7 @@ public interface NoteCountDOMapper {
 
     /**
      * 添加笔记计数记录或更新笔记点赞数
+     *
      * @param count
      * @param noteId
      * @return
@@ -29,6 +32,7 @@ public interface NoteCountDOMapper {
 
     /**
      * 添加记录或更新笔记收藏数
+     *
      * @param count
      * @param noteId
      * @return
@@ -37,9 +41,18 @@ public interface NoteCountDOMapper {
 
     /**
      * 添加记录或更新笔记评论数
+     *
      * @param count
      * @param noteId
      * @return
      */
     int insertOrUpdateCommentTotalByNoteId(@Param("count") int count, @Param("noteId") Long noteId);
+
+    /**
+     * 根据笔记 ID 批量查询
+     *
+     * @param noteIds
+     * @return
+     */
+    List<NoteCountDO> selectByNoteIds(@Param("noteIds") List<Long> noteIds);
 }

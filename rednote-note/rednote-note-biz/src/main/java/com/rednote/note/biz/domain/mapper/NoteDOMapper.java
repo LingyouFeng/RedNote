@@ -47,6 +47,15 @@ public interface NoteDOMapper {
 
     List<NoteDO> selectByNoteIds(@Param("noteIds") List<Long> noteIds);
 
+    /**
+     * 查询个人主页已发布笔记列表
+     * @param creatorId
+     * @param cursor
+     * @return
+     */
+    List<NoteDO> selectPublishedNoteListByUserIdAndCursor(@Param("creatorId") Long creatorId,
+                                                          @Param("cursor") Long cursor);
+
     int updateByPrimaryKeySelective(NoteDO record);
 
     int updateByPrimaryKey(NoteDO record);

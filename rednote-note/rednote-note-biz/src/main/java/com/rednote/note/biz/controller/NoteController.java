@@ -79,4 +79,9 @@ public class NoteController {
     public Result<FindNoteIsLikedAndCollectedRspVO> isLikedAndCollectedData(@Valid @RequestBody FindNoteIsLikedAndCollectedReqVO findNoteIsLikedAndCollectedReqVO) {
         return noteService.isLikedAndCollectedData(findNoteIsLikedAndCollectedReqVO);
     }
+
+    @PostMapping(value = "/published/list")
+    public Result<FindPublishedNoteListRspVO> findPublishedNoteList(@Valid @RequestBody FindPublishedNoteListReqVO findPublishedNoteListReqVO) {
+        return noteService.findPublishedNoteList(findPublishedNoteListReqVO);
+    }
 }

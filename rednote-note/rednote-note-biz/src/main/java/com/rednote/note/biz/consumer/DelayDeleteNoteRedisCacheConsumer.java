@@ -1,5 +1,6 @@
 package com.rednote.note.biz.consumer;
 
+import com.alibaba.fastjson.JSON;
 import com.rednote.note.biz.constant.MQConstants;
 import com.rednote.note.biz.constant.RedisKeyConstants;
 import jakarta.annotation.Resource;
@@ -8,6 +9,9 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 延时删除 Redis 笔记缓存
@@ -27,11 +31,21 @@ public class DelayDeleteNoteRedisCacheConsumer implements RocketMQListener<Strin
 
     @Override
     public void onMessage(String body) {
-        Long noteId = Long.valueOf(body);
-        log.info("## 延迟消息消费成功, noteId: {}", noteId);
+        try {
+            List<Long> noteIdAndUserId = JSON.parseArray(body, Long.class);
 
-        // 删除 Redis 笔记缓存
-        String noteDetailRedisKey = RedisKeyConstants.buildNoteDetailKey(noteId);
-        redisTemplate.delete(noteDetailRedisKey);
+            Long noteId = noteIdAndUserId.get(0);
+            Long userId = noteIdAndUserId.get(1);
+            log.info("## 延迟消息消费成功, noteId: {}, userId: {}", noteId, userId);
+
+            // 删除 Redis 笔记缓存
+            String noteDetailRedisKey = RedisKeyConstants.buildNoteDetailKey(noteId);
+            // 删除个人主页 - 已发布笔记列表缓存
+            String publishedNoteListRedisKey = RedisKeyConstants.buildPublishedNoteListKey(userId);
+            // 批量删除
+            redisTemplate.delete(Arrays.asList(noteDetailRedisKey, publishedNoteListRedisKey));
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 }
