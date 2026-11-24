@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 /**
  * 获取用户主页信息
  *
@@ -46,6 +48,11 @@ public class FindUserProfileRspVO {
      * 岁数
      */
     private Integer age;
+
+    /**
+     * 生日
+     */
+    private LocalDate birthday;
 
     /**
      * 个人介绍

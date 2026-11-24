@@ -84,6 +84,9 @@ public class DeleteCommentConsumer implements RocketMQListener<String> {
         // 1. 关联评论删除（一级评论下所有子评论，都需要删除）
         int count = commentDOMapper.deleteByParentId(commentId);
 
+        // 1.1 删除 Redis 中子评论列表 ZSET 缓存（整块删除，避免缓存中残留已删除的评论 ID，下次查询时从数据库重建）
+        redisTemplate.delete(RedisKeyConstants.buildChildCommentListKey(commentId));
+
         // 2. 计数更新（笔记下总评论数）
         // 更新 Redis 缓存
         String redisKey = RedisKeyConstants.buildNoteCommentTotalKey(noteId);
@@ -103,7 +106,9 @@ public class DeleteCommentConsumer implements RocketMQListener<String> {
      * @param commentDO
      */
     private void handleTwoLevelComment(CommentDO commentDO) {
+        Long noteId = commentDO.getNoteId();
         Long commentId = commentDO.getId();
+        Long parentCommentId = commentDO.getParentId();
 
         // 1. 批量删除关联评论（递归查询回复评论，并批量删除）
         List<Long> replyCommentIds = Lists.newArrayList();
@@ -115,14 +120,23 @@ public class DeleteCommentConsumer implements RocketMQListener<String> {
             count = commentDOMapper.deleteByIds(replyCommentIds);
         }
 
+        // 级联删除的回复，同步从 Redis 子评论列表 ZSET 中移除
+        if (CollUtil.isNotEmpty(replyCommentIds)) {
+            String childCommentRedisKey = RedisKeyConstants.buildChildCommentListKey(parentCommentId);
+            if (redisTemplate.hasKey(childCommentRedisKey)) {
+                redisTemplate.opsForZSet().remove(childCommentRedisKey, replyCommentIds.toArray());
+            }
+        }
+
         // 2. 更新一级评论的计数
-        Long parentCommentId = commentDO.getParentId();
         String redisKey = RedisKeyConstants.buildCountCommentKey(parentCommentId);
 
         boolean hasKey = redisTemplate.hasKey(redisKey);
         if (hasKey) {
             redisTemplate.opsForHash().increment(redisKey, RedisKeyConstants.FIELD_CHILD_COMMENT_TOTAL, -(count + 1));
         }
+        // 更新一级评论的下级评论总数
+        commentDOMapper.updateChildCommentTotal(parentCommentId, -(count + 1));
 
         // 3. 若是最早的发布的二级评论被删除，需要更新一级评论的 first_reply_comment_id
 
@@ -132,6 +146,7 @@ public class DeleteCommentConsumer implements RocketMQListener<String> {
 
         // 若删除的是最早回复的二级评论
         if (Objects.equals(firstReplyCommentId, commentId)) {
+            log.info("删除的是最早回复的二级评论，需要重新更新其一级评论的first_reply_comment_id, comment_id: {}", commentId);
             // 查询数据库，重新获取一级评论最早回复的评论
             CommentDO earliestCommentDO = commentDOMapper.selectEarliestByParentId(parentCommentId);
 
@@ -139,9 +154,24 @@ public class DeleteCommentConsumer implements RocketMQListener<String> {
             Long earliestCommentId = Objects.nonNull(earliestCommentDO) ? earliestCommentDO.getId() : null;
             // 更新其一级评论的 first_reply_comment_id
             commentDOMapper.updateFirstReplyCommentIdByPrimaryKey(earliestCommentId, parentCommentId);
+
+            redisTemplate.delete(RedisKeyConstants.buildChildCommentListKey(parentCommentId));
         }
 
-        // 4. 重新计算一级评论的热度值
+        // 4. 更新 Redis 缓存中的笔记下总评论数
+        String noteCommentTotalRedisKey = RedisKeyConstants.buildNoteCommentTotalKey(noteId);
+        boolean noteCommentTotalHasKey = redisTemplate.hasKey(noteCommentTotalRedisKey);
+
+        if (noteCommentTotalHasKey) {
+            // 笔记评论总数 -(count + 1)
+            log.info("更新 redis 笔记评论总数, key: {}, count:{}", noteCommentTotalRedisKey, -(count + 1));
+            redisTemplate.opsForHash().increment(noteCommentTotalRedisKey, RedisKeyConstants.FIELD_COMMENT_TOTAL, -(count + 1));
+        }
+
+        // 更新 t_note_count 计数表
+        noteCountDOMapper.updateCommentTotalByNoteId(noteId, -(count + 1));
+
+        // 5. 重新计算一级评论的热度值
         Set<Long> commentIds = Sets.newHashSetWithExpectedSize(1);
         commentIds.add(parentCommentId);
 

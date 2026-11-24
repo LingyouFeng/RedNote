@@ -63,6 +63,15 @@ public interface CommentDOMapper {
                                               @Param("id") Long id);
 
     /**
+     * 更新一级评论的子评论总数
+     * @param parentId
+     * @param count
+     * @return
+     */
+    int updateChildCommentTotal(@Param("parentId") Long parentId,
+                                @Param("count") int count);
+
+    /**
      * 查询评论分页数据
      * @param noteId
      * @param offset

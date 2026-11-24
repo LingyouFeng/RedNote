@@ -28,7 +28,7 @@ import com.rednote.user.biz.domain.dataobject.UserRoleDO;
 import com.rednote.user.biz.domain.mapper.RoleDOMapper;
 import com.rednote.user.biz.domain.mapper.UserDOMapper;
 import com.rednote.user.biz.domain.mapper.UserRoleDOMapper;
-import com.rednote.user.biz.enums.SexEnum;
+import com.rednote.user.biz.enums.GenderEnum;
 import com.rednote.user.biz.enums.UserResultCodeEnum;
 import com.rednote.user.biz.model.vo.FindUserProfileReqVO;
 import com.rednote.user.biz.model.vo.FindUserProfileRspVO;
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
             needUpdate = true;
         }
 
-        // 用户个人id
+        // 用户小红书 id
         String rednoteId = updateUserInfoReqVO.getRednoteId();
         if (StringUtils.isNotBlank(rednoteId)) {
             Preconditions.checkArgument(ParamUtils.checkUserId(rednoteId),
@@ -168,11 +168,11 @@ public class UserServiceImpl implements UserService {
         }
 
         // 性别
-        Integer sex = updateUserInfoReqVO.getGender();
-        if (Objects.nonNull(sex)) {
-            Preconditions.checkArgument(SexEnum.isValid(sex),
-                    UserResultCodeEnum.SEX_VALID_FAIL.getMessage());
-            userDO.setGender(sex);
+        Integer gender = updateUserInfoReqVO.getGender();
+        if (Objects.nonNull(gender)) {
+            Preconditions.checkArgument(GenderEnum.isValid(gender),
+                    UserResultCodeEnum.GENDER_VALID_FAIL.getMessage());
+            userDO.setGender(gender);
             needUpdate = true;
         }
 
@@ -556,6 +556,7 @@ public class UserServiceImpl implements UserService {
                 .nickname(userDO.getNickname())
                 .rednoteId(userDO.getRednoteId())
                 .gender(userDO.getGender())
+                .birthday(userDO.getBirthday())
                 .introduction(userDO.getIntroduction())
                 .build();
 

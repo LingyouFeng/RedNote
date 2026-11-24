@@ -11,6 +11,7 @@ import com.rednote.comment.biz.model.bo.CommentBO;
 import com.rednote.comment.biz.model.dto.CountPublishCommentMqDTO;
 import com.rednote.comment.biz.model.dto.PublishCommentMqDTO;
 import com.rednote.comment.biz.rpc.KeyValueRpcService;
+import com.rednote.common.utils.DateUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.RateLimiter;
@@ -224,6 +225,9 @@ public class Comment2DBConsumer {
                     // 同步一级评论到 Redis 热点评论 ZSET 中
                     syncOneLevelComment2RedisZSet(commentBOS);
 
+                    // 同步二级评论到 Redis 子评论 ZSET 中
+                    syncChildComment2RedisZSet(commentBOS);
+
                     // 异步发送 MQ 消息
                     rocketMQTemplate.asyncSend(MQConstants.TOPIC_COUNT_NOTE_COMMENT, message, new SendCallback() {
                         @Override
@@ -290,6 +294,43 @@ public class Comment2DBConsumer {
             commentBOList.forEach(commentBO -> {
                 args.add(commentBO.getId()); // Member: 评论ID
                 args.add(0); // Score: 热度值，初始值为 0
+            });
+
+            // 执行 Lua 脚本
+            redisTemplate.execute(script, Collections.singletonList(key), args.toArray());
+        });
+    }
+
+    /**
+     * 同步二级评论到 Redis 子评论 ZSET 中
+     *
+     * @param commentBOS
+     */
+    private void syncChildComment2RedisZSet(List<CommentBO> commentBOS) {
+        // 过滤出二级评论，并按所属父评论 ID 进行分组，转换为一个 Map 字典
+        Map<Long, List<CommentBO>> parentIdAndBOListMap = commentBOS.stream()
+                .filter(commentBO -> Objects.equals(commentBO.getLevel(), CommentLevelEnum.TWO.getCode())) // 仅过滤二级评论
+                .filter(commentBO -> Objects.nonNull(commentBO.getParentId()))
+                .filter(commentBO -> Objects.nonNull(commentBO.getCreateTime()))
+                .collect(Collectors.groupingBy(CommentBO::getParentId));
+
+        // 循环字典
+        parentIdAndBOListMap.forEach((parentId, commentBOList) -> {
+            // 构建 Redis 子评论 ZSET Key
+            String key = RedisKeyConstants.buildChildCommentListKey(parentId);
+
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+            // Lua 脚本路径
+            script.setScriptSource(new ResourceScriptSource(new ClassPathResource("/lua/add_child_comments.lua")));
+            // 返回值类型
+            script.setResultType(Long.class);
+
+            // 构建执行 Lua 脚本所需的 ARGS 参数
+            List<Object> args = Lists.newArrayList();
+            commentBOList.forEach(commentBO -> {
+                args.add(commentBO.getId()); // Member: 评论 ID
+                // Score: 评论创建时间戳，需与缓存重建时的 score 保持一致
+                args.add(DateUtils.localDateTime2Timestamp(commentBO.getCreateTime()));
             });
 
             // 执行 Lua 脚本

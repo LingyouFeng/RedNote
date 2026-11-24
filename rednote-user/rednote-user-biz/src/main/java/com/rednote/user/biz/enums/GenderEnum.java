@@ -8,21 +8,21 @@ import java.util.Objects;
 /**
  * 性别枚举类
  *
- *
  * @author Jason Feng
  * @since 2026-02-21 16:54
  */
 @Getter
 @AllArgsConstructor
-public enum SexEnum {
+public enum GenderEnum {
 
-    WOMAN(0),
-    MAN(1);
+    UNKNOWN(0),
+    FEMALE(1),
+    MALE(2);
 
     private final Integer value;
 
     public static boolean isValid(Integer value) {
-        for (SexEnum loginTypeEnum : SexEnum.values()) {
+        for (GenderEnum loginTypeEnum : GenderEnum.values()) {
             if (Objects.equals(value, loginTypeEnum.getValue())) {
                 return true;
             }
