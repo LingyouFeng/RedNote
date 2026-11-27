@@ -25,6 +25,7 @@
         <module>rednote-data-align</module>
         <module>rednote-search</module>
         <module>rednote-comment</module>
+        <module>redshop-product</module>
     </modules>
 
     <properties>

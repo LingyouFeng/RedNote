@@ -1,0 +1,30 @@
+package com.redshop.product.biz.enums;
+
+import com.rednote.common.exception.BaseExceptionInterface;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+/**
+ * 商品模块错误码枚举类
+ *
+ * @author Jason Feng
+ * @since 2026-11-26 22:56
+ */
+@Getter
+@AllArgsConstructor
+public enum ProductResultCodeEnum implements BaseExceptionInterface {
+
+    // ----------- 业务异常状态码 -----------
+    NICK_NAME_VALID_FAIL(20001, "昵称请设置2-24个字符，不能使用@《/等特殊字符"),
+    REDNOTE_ID_VALID_FAIL(20002, "用户id请设置6-15个字符，仅可使用英文（必须）、数字、下划线"),
+    GENDER_VALID_FAIL(20003, "性别错误"),
+    INTRODUCTION_VALID_FAIL(20004, "个人简介请设置1-100个字符"),
+    UPLOAD_AVATAR_FAIL(20005, "头像上传失败"),
+    UPLOAD_BACKGROUND_IMG_FAIL(20006, "背景图上传失败"),
+    USER_NOT_FOUND(20007, "该用户不存在"),
+    CANT_UPDATE_OTHER_USER_PROFILE(20008, "无权限修改他人用户信息"),
+    ;
+
+    private final Integer code;
+    private final String message;
+}
