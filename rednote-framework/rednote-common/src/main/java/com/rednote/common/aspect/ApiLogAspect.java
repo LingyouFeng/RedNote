@@ -34,7 +34,7 @@ public class ApiLogAspect {
      * 格式：execution(返回值 包名.类名.方法名(参数))
      * *：通配符，代表所有；..：代表任意参数/子包
      */
-    @Pointcut("execution(* com.rednote..controller..*.*(..))")
+    @Pointcut("execution(* com..controller..*.*(..))")
     public void apiLogPointcut() {}
 
     /**

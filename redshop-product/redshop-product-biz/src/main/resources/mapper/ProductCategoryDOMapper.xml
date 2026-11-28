@@ -9,7 +9,7 @@
         <result column="image" jdbcType="VARCHAR" property="image"/>
         <result column="level" jdbcType="TINYINT" property="level"/>
         <result column="sort" jdbcType="INTEGER" property="sort"/>
-        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_disabled" jdbcType="TINYINT" property="isDisabled"/>
         <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -17,7 +17,7 @@
 
     <sql id="Base_Column_List">
         id
-        , parent_id, `name`, image, `level`, sort, `status`, is_deleted, create_time, update_time
+        , parent_id, `name`, image, `level`, sort, `is_disabled`, is_deleted, create_time, update_time
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -31,6 +31,7 @@
         select
         <include refid="Base_Column_List"/>
         from product_category
+        where is_disabled = 0 and is_deleted = 0
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -42,11 +43,11 @@
     <insert id="insert" parameterType="com.redshop.product.biz.domain.dataobject.ProductCategoryDO">
         insert into product_category (id, parent_id, `name`,
                                       image, `level`, sort,
-                                      `status`, is_deleted, create_time,
+                                      `is_disabled`, is_deleted, create_time,
                                       update_time)
         values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
                 #{image,jdbcType=VARCHAR}, #{level,jdbcType=TINYINT}, #{sort,jdbcType=INTEGER},
-                #{status,jdbcType=TINYINT}, #{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
+                #{isDisabled,jdbcType=TINYINT}, #{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP},
                 #{updateTime,jdbcType=TIMESTAMP})
     </insert>
 
@@ -71,8 +72,8 @@
             <if test="sort != null">
                 sort,
             </if>
-            <if test="status != null">
-                `status`,
+            <if test="isDisabled != null">
+                is_disabled,
             </if>
             <if test="isDeleted != null">
                 is_deleted,
@@ -103,8 +104,8 @@
             <if test="sort != null">
                 #{sort,jdbcType=INTEGER},
             </if>
-            <if test="status != null">
-                #{status,jdbcType=TINYINT},
+            <if test="isDisabled != null">
+                #{isDisabled,jdbcType=TINYINT},
             </if>
             <if test="isDeleted != null">
                 #{isDeleted,jdbcType=TINYINT},
@@ -137,8 +138,8 @@
             <if test="sort != null">
                 sort = #{sort,jdbcType=INTEGER},
             </if>
-            <if test="status != null">
-                `status` = #{status,jdbcType=TINYINT},
+            <if test="isDisabled != null">
+                is_disabled = #{isDisabled,jdbcType=TINYINT},
             </if>
             <if test="isDeleted != null">
                 is_deleted = #{isDeleted,jdbcType=TINYINT},
@@ -160,7 +161,7 @@
             image       = #{image,jdbcType=VARCHAR},
             `level`     = #{level,jdbcType=TINYINT},
             sort        = #{sort,jdbcType=INTEGER},
-            `status`    = #{status,jdbcType=TINYINT},
+            is_disabled = #{isDisabled,jdbcType=TINYINT},
             is_deleted  = #{isDeleted,jdbcType=TINYINT},
             create_time = #{createTime,jdbcType=TIMESTAMP},
             update_time = #{updateTime,jdbcType=TIMESTAMP}

@@ -31,9 +31,9 @@ public class ProductCategoryDO {
 
     private Integer sort;
 
-    private Integer status;
+    private Boolean isDisabled;
 
-    private Integer isDeleted;
+    private Boolean isDeleted;
 
     private LocalDateTime createTime;
 
